@@ -21,10 +21,10 @@ export default {
       return await bot.handleUpdate(update);
     }
     
-    // 手动触发RSS检查
+    // 手动触发RSS检查（异步执行，立即返回；供外部定时任务调用）
     if (url.pathname === '/check-rss' && request.method === 'GET') {
-      await this.checkRSSFeeds(env);
-      return new Response('RSS检查完成', { status: 200 });
+      ctx.waitUntil(this.checkRSSFeeds(env));
+      return new Response('RSS检查已触发', { status: 202 });
     }
     
     return new Response('RSS Telegram Bot运行中', { status: 200 });
