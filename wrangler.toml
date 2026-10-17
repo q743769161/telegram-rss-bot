@@ -12,3 +12,4 @@ compatibility_date = "2024-01-01"
 # Cron触发器 (每10分钟检查一次RSS)
 [triggers]
 crons = ["*/10 * * * *"]
+
