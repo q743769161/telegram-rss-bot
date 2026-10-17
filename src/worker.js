@@ -14,11 +14,13 @@ export default {
       console.warn('初始化数据库结构失败(可忽略):', e.message);
     }
 
-    // Telegram Webhook处理
+    // Telegram Webhook处理：立即回 200 确认收到，重活放后台跑，
+    // 避免处理慢导致 Telegram "Read timeout expired" 而积压重试
     if (url.pathname === '/webhook' && request.method === 'POST') {
       const bot = new TelegramBot(env.TELEGRAM_BOT_TOKEN, env.DB);
       const update = await request.json();
-      return await bot.handleUpdate(update);
+      ctx.waitUntil(bot.handleUpdate(update));
+      return new Response('OK', { status: 200 });
     }
     
     // 手动触发RSS检查（异步执行，立即返回；供外部定时任务调用）
